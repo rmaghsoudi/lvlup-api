@@ -29,5 +29,6 @@ class Entry(models.Model):
     validators=[MaxValueValidator(10), MinValueValidator(1)]
     )
 
+  # Tells django what to print out when printing an instance
   def __str__(self):
     return self.name
