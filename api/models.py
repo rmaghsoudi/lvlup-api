@@ -9,7 +9,7 @@ class Entry(models.Model):
   description = models.CharField(
     max_length=500,
     blank=True,
-    default=''
+    null=True
     )
   # Creates a one-to-many relationship with itself
   parentId = models.ForeignKey(
