@@ -4,7 +4,7 @@ from .validators import validate_type
 
 # Create your models here.
 class Entry(models.Model):
-  name = models.CharField(max_length=50)
+  name = models.CharField(max_length=50, blank=True)
   completed = models.BooleanField(default=False)
   description = models.CharField(
     max_length=500,
@@ -21,6 +21,7 @@ class Entry(models.Model):
   # Uses my custom validator to ensure proper values are saved
   type = models.CharField(
     max_length=6,
+    blank=True,
     validators=[validate_type]
     )
   # Validates int to ensure it's not < 1 or > 10
