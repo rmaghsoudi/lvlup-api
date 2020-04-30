@@ -1,5 +1,5 @@
-from .serializers import EntrySerializer
-from .models import Entry
+from .serializers import EntrySerializer, UserSerializer
+from .models import Entry, User
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -49,3 +49,13 @@ class EntryDetail(APIView):
         entry = self.get_object(pk)
         entry.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserList(APIView):
+    """
+    List all entrys, or create a new entry.
+    """
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        print(serializer.data)
+        return Response(serializer.data)
