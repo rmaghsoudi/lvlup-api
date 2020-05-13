@@ -1,5 +1,6 @@
 from .serializers import EntrySerializer, UserSerializer
 from .models import Entry, User
+from .helpers import calculate_xp
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,7 +23,8 @@ class EntryDetail(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = EntrySerializer(data=request.data)
+        new_data = calculate_xp(request.data)
+        serializer = EntrySerializer(data=new_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -53,3 +55,16 @@ class UserDetail(APIView):
         user = self.get_object(pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+    def patch(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        user = self.get_object(pk)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

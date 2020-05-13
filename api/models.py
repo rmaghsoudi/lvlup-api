@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from .validators import validate_type
+from .helpers import validate_type
 
 # Create your models here.
 class User(models.Model):
@@ -54,6 +54,11 @@ class Entry(models.Model):
     default = 1,
     validators=[MaxValueValidator(10), MinValueValidator(1)]
     )
+
+  xp = models.IntegerField(
+    default=100,
+    validators=[MinValueValidator(100), MaxValueValidator(10000)]
+  )
 
   # Tells django what to print out when printing an instance
   def __str__(self):
