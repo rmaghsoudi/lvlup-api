@@ -11,4 +11,4 @@ class UserSerializer(serializers.ModelSerializer):
     entries = EntrySerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ['auth_id', 'level', 'xp', 'entries']
+        fields = ['id', 'auth_id', 'level', 'xp', 'entries']
