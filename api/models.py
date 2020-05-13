@@ -4,7 +4,10 @@ from .validators import validate_type
 
 # Create your models here.
 class User(models.Model):
-    auth0Id = models.CharField(max_length=100)
+    auth_id = models.CharField(
+      max_length=100,
+      unique=True
+      )
     level = models.IntegerField(
         default=1,
         validators=[MinValueValidator(1)]
@@ -15,7 +18,7 @@ class User(models.Model):
     )
 
     def __str__(self):
-        return self.auth0Id
+        return self.auth_id
 
     pass
 
@@ -28,14 +31,14 @@ class Entry(models.Model):
     null=True
     )
   # Creates a one-to-many relationship with itself
-  parentId = models.ForeignKey(
+  parent_entry = models.ForeignKey(
     'self',
     blank=True,
     null=True,
     on_delete=models.SET_NULL
     )
   # Creates a one-to-many relationship with itself
-  userId = models.ForeignKey(
+  user = models.ForeignKey(
     User,
     related_name='entries',
     on_delete=models.CASCADE

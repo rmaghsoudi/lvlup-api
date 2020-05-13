@@ -5,10 +5,10 @@ from .models import Entry, User
 class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
-        fields = ['id', 'name', 'description', 'completed', 'parentId', 'type', 'difficulty']
+        fields = ['id', 'name', 'description', 'completed', 'parent_entry', 'type', 'difficulty', 'user']
 
 class UserSerializer(serializers.ModelSerializer):
     entries = EntrySerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'auth0Id', 'level', 'xp', 'entries']
+        fields = ['auth_id', 'level', 'xp', 'entries']
