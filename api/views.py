@@ -1,6 +1,6 @@
 from .serializers import EntrySerializer, UserSerializer
 from .models import Entry, User
-from .helpers import calculate_xp
+from .helpers import calculate_xp, will_lvlup
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -58,7 +58,8 @@ class UserDetail(APIView):
 
     def patch(self, request, pk, format=None):
         user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data)
+        updated_user = will_lvlup(request.data, user)
+        serializer = UserSerializer(user, data=updated_user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
