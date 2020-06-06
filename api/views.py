@@ -23,7 +23,7 @@ class EntryDetail(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        new_data = calculate_xp(request.data)
+        new_data = calculate_xp(request.data.copy())
         serializer = EntrySerializer(data=new_data)
         if serializer.is_valid():
             serializer.save()
@@ -32,7 +32,8 @@ class EntryDetail(APIView):
 
     def patch(self, request, pk, format=None):
         entry = self.get_object(pk)
-        serializer = EntrySerializer(entry, data=request.data)
+        processed_data = entry.update_self(request.data)
+        serializer = EntrySerializer(entry, data=processed_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

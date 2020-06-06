@@ -12,10 +12,9 @@ def validate_type(value):
         )
 
 
-def calculate_xp(req_data):
-    new_data = req_data.copy()
-    multiplier = types[req_data['type']]
-    xp = (100 * int(req_data['difficulty'])) * multiplier
-    new_data['xp'] = xp
-    return new_data
+def calculate_xp(data):
+    multiplier = types[data['type']]
+    xp = (100 * int(data['difficulty'])) * multiplier
+    data['xp'] = xp
+    return data
 

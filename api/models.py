@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from .helpers import validate_type
+from .helpers import validate_type, calculate_xp
 
 # Create your models here.
 
@@ -123,3 +123,34 @@ class Entry(models.Model):
     # Tells django what to print out when printing an instance
     def __str__(self):
         return self.name
+
+    # Takes a Querydict as an arg to "validate" the form data sent from the frontend
+    def update_self(self, data):
+        updated_entry = {
+          'id': self.id,
+          'name': self.name,
+          'completed': self.completed,
+          'description': self.description,
+          'parent_entry': self.parent_entry, 
+          'user': self.user.id, 
+          'type': self.type, 
+          'difficulty': self.difficulty, 
+          'xp': self.xp
+        }
+
+        for key, value in data.items():
+            if key == ('difficulty' or 'parent_entry' or 'xp'):
+                updated_entry[key] = int(value)
+            elif key == 'completed':
+                updated_entry[key] = True
+            else:
+                updated_entry[key] = value
+
+        if 'completed' not in data.keys():
+            updated_entry['completed'] = False
+
+        if updated_entry['difficulty'] != self.difficulty or updated_entry['type'] != self.type:
+            new_xp = calculate_xp({'difficulty': updated_entry['difficulty'], 'type': updated_entry['type']})
+            updated_entry['xp'] = new_xp['xp']
+
+        return updated_entry
