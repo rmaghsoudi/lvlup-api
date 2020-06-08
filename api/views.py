@@ -1,6 +1,6 @@
 from .serializers import EntrySerializer, UserSerializer
 from .models import Entry, User
-from .helpers import calculate_xp
+from .helpers import post_entry
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,8 +23,8 @@ class EntryDetail(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        new_data = calculate_xp(request.data.copy())
-        serializer = EntrySerializer(data=new_data)
+        processed_entry = post_entry(request.data.dict())
+        serializer = EntrySerializer(data=processed_entry)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
