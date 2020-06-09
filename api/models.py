@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.forms.models import model_to_dict
 from .helpers import validate_type, calculate_xp
 
 # Create your models here.
@@ -43,30 +44,23 @@ class User(models.Model):
 
         while running:
             if xp >= self.calculate_xp_to_lvlup(level):
-                level += 1
                 xp -= self.calculate_xp_to_lvlup(level)
+                level += 1
             else:
                 running = False
         return xp, level
 
     # handles level logic when xp is sent in a request
-    def leveling(self, xp):
+    def leveling_up(self, xp):
       # build new object because serializer doesn't accept User objects
-        user = {
-          'id': self.id, 
-          'auth_id': self.auth_id, 
-          'level': self.level, 
-          'xp': self.xp, 
-          'xp_to_lvlup': self.xp_to_lvlup, 
-          'entries': self.entries
-        }
+        user = model_to_dict(self)
         xp_to_add = xp
         xp_needed = user['xp_to_lvlup']
         new_xp = user['xp'] + xp_to_add
         xp_diff = new_xp - xp_needed
 
-        if xp_diff >= self.calculate_xp_to_lvlup((self.level + 1)):
-            new_xp, new_level = self.multiple_lvlup(new_xp)
+        if xp_diff >= self.calculate_xp_to_lvlup(self.level + 1):
+            new_xp, new_level = self.multiple_lvlup(xp_diff)
             user['level'] = new_level
             user['xp'] = new_xp
             user['xp_to_lvlup'] = self.calculate_xp_to_lvlup(new_level)
@@ -81,6 +75,52 @@ class User(models.Model):
 
         return user
 
+    def multiple_lvldown(self, xp):
+        running = True
+        level = self.level - 2
+        xp_diff = self.calculate_xp_to_lvlup(level) + xp
+
+        while running and (level > 1):
+            if xp_diff < 0:
+                xp_diff += self.calculate_xp_to_lvlup(level)
+                level -= 1
+            else:
+                running = False
+
+        if level <= 1:
+            level = 1
+            xp_diff = self.calculate_xp_to_lvlup(level) + xp
+            if xp_diff < 0:
+                xp_diff = 0
+
+        return xp_diff, level
+
+    def leveling_down(self, xp):
+        user = model_to_dict(self)
+        xp_to_subtract = xp
+        xp_to_lvldown = self.calculate_xp_to_lvlup(user['level'] - 1)
+        new_xp = user['xp'] - xp_to_subtract
+        xp_diff = xp_to_lvldown + new_xp 
+
+        if (self.level == 1) and (new_xp < 0):
+            user['xp'] = 0
+        elif new_xp < 0:
+
+            if xp_diff < 0:
+                new_xp, new_level = self.multiple_lvldown(xp_diff)
+                user['level'] = new_level
+                user['xp'] = new_xp
+                user['xp_to_lvlup'] = self.calculate_xp_to_lvlup(new_level)
+
+            elif xp_diff > 0:
+                user['level'] -= 1
+                user['xp'] = xp_diff
+                user['xp_to_lvlup'] = xp_to_lvldown
+
+        else:
+            user['xp'] = new_xp
+
+        return user
 
 class Entry(models.Model):
     name = models.CharField(max_length=50, blank=True)
@@ -126,17 +166,7 @@ class Entry(models.Model):
 
     # Takes a Querydict as an arg to "validate" the form data sent from the frontend
     def update_self(self, data):
-        updated_entry = {
-          'id': self.id,
-          'name': self.name,
-          'completed': self.completed,
-          'description': self.description,
-          'parent_entry': self.parent_entry, 
-          'user': self.user.id, 
-          'type': self.type, 
-          'difficulty': self.difficulty, 
-          'xp': self.xp
-        }
+        updated_entry = model_to_dict(self)
 
         for key, value in data.items():
             if key == ('difficulty' or 'parent_entry' or 'xp'):

@@ -27,4 +27,5 @@ def post_entry(dict):
     dict = calculate_xp(dict)
 
     return dict
+
 # req data {'difficulty': '1', 'name': 'new test', 'type': 'task', 'user': ''}
