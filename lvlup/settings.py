@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'lvlup.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lvlupdb',
-        'USER': 'rmaghsoudi',
-        'PASSWORD': 'y6qU@7#dMRHI',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
