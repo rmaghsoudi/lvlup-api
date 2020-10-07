@@ -100,7 +100,7 @@ class User(models.Model):
         xp_to_subtract = xp
         xp_to_lvldown = self.calculate_xp_to_lvlup(user['level'] - 1)
         new_xp = user['xp'] - xp_to_subtract
-        xp_diff = xp_to_lvldown + new_xp 
+        xp_diff = xp_to_lvldown + new_xp
 
         if (self.level == 1) and (new_xp < 0):
             user['xp'] = 0
@@ -121,6 +121,7 @@ class User(models.Model):
             user['xp'] = new_xp
 
         return user
+
 
 class Entry(models.Model):
     name = models.CharField(max_length=50, blank=True)
@@ -180,7 +181,11 @@ class Entry(models.Model):
             updated_entry['completed'] = False
 
         if updated_entry['difficulty'] != self.difficulty or updated_entry['type'] != self.type:
-            new_xp = calculate_xp({'difficulty': updated_entry['difficulty'], 'type': updated_entry['type']})
+            new_xp = calculate_xp(
+                {'difficulty': updated_entry['difficulty'], 'type': updated_entry['type']})
             updated_entry['xp'] = new_xp['xp']
 
         return updated_entry
+
+    class Meta:
+        verbose_name_plural = "entries"
