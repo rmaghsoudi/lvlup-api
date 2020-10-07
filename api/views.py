@@ -144,13 +144,19 @@ def requires_scope(required_scope):
         return decorated
     return require_scope
 
+# Views from Auth0 quickstart for reference
+# @api_view(['GET'])
+# @permission_classes([AllowAny])
+# def public(request):
+#     return JsonResponse({'message': 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'})
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def public(request):
-    return JsonResponse({'message': 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'})
+
+# @api_view(['GET'])
+# def private(request):
+#     return JsonResponse({'message': 'Hello from a private endpoint! You need to be authenticated to see this.'})
 
 
-@api_view(['GET'])
-def private(request):
-    return JsonResponse({'message': 'Hello from a private endpoint! You need to be authenticated to see this.'})
+# @api_view(['GET'])
+# @requires_scope('read:messages')
+# def private_scoped(request):
+#     return JsonResponse({'message': 'Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.'})

@@ -8,8 +8,8 @@ urlpatterns = [
     path('entries/', views.EntryDetail.as_view()),
     path('entries/<int:pk>', views.EntryDetail.as_view()),
     path('users/<int:pk>', views.UserDetail.as_view()),
-    path('api/public', views.public),
-    path('api/private', views.private),
+    # path('api/public', views.public),
+    # path('api/private', views.private),
     # path('api/private-scoped', views.private_scoped),
 ]
 
