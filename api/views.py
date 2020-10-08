@@ -15,6 +15,7 @@ from django.http import JsonResponse
 # Create your views here.
 
 
+@permission_classes([AllowAny])
 class EntryDetail(APIView):
     """
     Retrieve, update or delete a entry instance.
@@ -84,6 +85,7 @@ class EntryDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@permission_classes([AllowAny])
 class UserDetail(APIView):
 
     def get_object(self, pk):
